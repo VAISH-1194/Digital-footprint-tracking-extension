@@ -1,58 +1,30 @@
+/* style.css */
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f7f9;
-  }
-  
-  .container {
-    width: 80%;
-    margin: 50px auto;
-    text-align: center;
-  }
-  
-  h1 {
-    font-size: 2em;
-    color: #333;
-  }
-  
-  #user-list {
-    margin-top: 20px;
+    margin: 20px;
+}
+
+#activity-tracker {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  
-  .user {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
+    width: 300px;
+}
+
+button {
     margin: 10px;
-    width: 70%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .user .buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-  }
-  
-  button {
-    padding: 10px 15px;
-    background-color: #007bff;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
     border: none;
     border-radius: 5px;
-    color: white;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#activity-list {
+    margin-top: 20px;
+}
