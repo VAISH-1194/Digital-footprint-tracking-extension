@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Activity Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Activity Tracker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>User Activity Dashboard</h1>
-    <div id="user-list"></div>
-  </div>
-  <script src="script.js"></script>
+    <div id="activity-tracker">
+        <h2>User Activity Tracker</h2>
+        <div id="user-id">User ID: Loading...</div>
+        <button id="view-activity">View Activity</button>
+        <button id="download-report">Download Report</button>
+
+        <div id="activity-list" style="display:none;">
+            <h3>Activity Details</h3>
+            <ul id="activities"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
