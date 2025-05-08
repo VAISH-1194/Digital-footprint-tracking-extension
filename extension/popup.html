@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 200px;
+      padding: 10px;
+    }
+    input, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h3>Set Your Email</h3>
+  <input type="email" id="email" placeholder="Enter email" />
+  <button onclick="saveEmail()">Save</button>
+
+  <script>
+    function saveEmail() {
+      const email = document.getElementById('email').value;
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      // Store in both chrome storage and localStorage for access in content.js
+      chrome.storage.local.set({ user_email: email }, () => {
+        localStorage.setItem('user_email', email); // Fallback for content.js
+        alert('Email saved!');
+      });
+    }
+
+    // Load existing email if available
+    chrome.storage.local.get('user_email', (data) => {
+      if (data.user_email) {
+        document.getElementById('email').value = data.user_email;
+      }
+    });
+  </script>
+</body>
+</html>
