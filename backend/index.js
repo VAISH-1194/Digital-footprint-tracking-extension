@@ -1,52 +1,68 @@
+// backend/index.js
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 const app = express();
 const PORT = 3000;
 
-// TEMP store for user activity
-const userLogs = {};
-
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Digital Footprint Tracker API is running!');
-  });
-  
-// POST /activity → Store activity
+const activityLog = [];
+
+// Function to get platform info
+function getDeviceDetails(req, activity) {
+  const userAgent = req.headers['user-agent'] || 'Unknown';
+  const platform = os.platform();
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const timestamp = new Date().toISOString();
+
+  return {
+    ...activity,
+    browser: userAgent,
+    platform,
+    timezone,
+    timestamp
+  };
+}
+
+// Record activity
 app.post('/activity', (req, res) => {
-  const activity = req.body;
-  const email = activity.email || 'unknown@example.com';
+  const activity = getDeviceDetails(req, req.body);
 
-  if (!userLogs[email]) userLogs[email] = [];
-  userLogs[email].push(activity);
+  activityLog.push(activity);
 
-  console.log(`[Activity] Received from ${email}`);
-  res.status(200).send({ message: 'Activity logged' });
+  console.log(`[Activity] Received from ${activity.email} | ${activity.timestamp} | ${activity.type} | ${activity.browser} | ${activity.platform} | ${activity.timezone}`);
+
+  res.sendStatus(200);
 });
 
-// GET /users → List email IDs
-// Add a new endpoint to get all users (just an example)
-app.get('/users', (req, res) => {
-    const users = [
-      { email: 'user1@example.com' },
-      { device_id: 'bd21e14f-02ae-451e-87b4-6ffeef12a51d' },
-      // Add more users dynamically from your DB or storage
-    ];
-    
-    res.json(users);
+// Get all activities for a user
+app.get('/activities/:userId', (req, res) => {
+  const userId = req.params.userId;
+  const filtered = activityLog.filter(act => act.email === userId);
+  res.json(filtered);
+});
+
+// Download report
+app.get('/download/:userId', (req, res) => {
+  const userId = req.params.userId;
+  const filtered = activityLog.filter(act => act.email === userId);
+
+  const csv = [
+    'Timestamp,Event Type,Email,Element,Text,URL,Browser,Platform,Timezone,Screen Resolution,Window Size'
+  ];
+
+  filtered.forEach(act => {
+    csv.push(`"${act.timestamp}","${act.type}","${act.email}","${act.element || ''}","${act.text || ''}","${act.url}","${act.browser}","${act.platform}","${act.timezone}","${act.screen || ''}","${act.window || ''}"`);
   });
-  
-// GET /activity/:email → Last 24h activity
-app.get('/activity/:email', (req, res) => {
-  const email = req.params.email;
-  const now = Date.now();
-  const activities = (userLogs[email] || []).filter(a => {
-    return now - new Date(a.timestamp).getTime() < 24 * 60 * 60 * 1000;
-  });
-  res.send(activities);
+
+  const filePath = path.join(__dirname, 'report.csv');
+  fs.writeFileSync(filePath, csv.join('\n'));
+
+  res.download(filePath);
 });
 
 app.listen(PORT, () => {
